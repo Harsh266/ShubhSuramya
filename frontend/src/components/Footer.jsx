@@ -20,7 +20,7 @@ export default function Footer() {
         }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8 pt-16 pb-32">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-8 pt-16 pb-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
           {/* 1. BRAND */}
           <div className="flex flex-col gap-5">
@@ -115,7 +115,7 @@ export default function Footer() {
         <span
           className="font-semibold text-[#1E2A5A] opacity-[0.1] whitespace-nowrap"
           style={{
-            fontSize: "clamp(70px, 12vw, 190px)",
+            fontSize: "clamp(20px, 12vw, 210px)",
             lineHeight: 1,
             letterSpacing: "-0.02em",
           }}

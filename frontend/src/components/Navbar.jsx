@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import logo from "../../public/logo.png";
 import { TbMessageCircle } from "react-icons/tb";
 
@@ -19,10 +19,65 @@ export default function Navbar() {
         </Link>
 
         <ul className="hidden md:flex items-center gap-8">
-          <li><Link to="/" className="text-[12px] font-semibold tracking-widest text-[#FF5A3C]">HOME</Link></li>
-          <li><Link to="/about" className="text-[12px] font-semibold tracking-widest text-[#2d2d2d] hover:text-[#FF5A3C]">ABOUT US</Link></li>
-          <li><Link to="/projects" className="text-[12px] font-semibold tracking-widest text-[#2d2d2d] hover:text-[#FF5A3C]">PROJECTS</Link></li>
-          <li><Link to="/contact" className="text-[12px] font-semibold tracking-widest text-[#2d2d2d] hover:text-[#FF5A3C]">CONTACT US</Link></li>
+          <li>
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `text-[12px] font-semibold tracking-widest ${
+                  isActive
+                    ? "text-[#FF5A3C]"
+                    : "text-[#2d2d2d] hover:text-[#FF5A3C]"
+                }`
+              }
+            >
+              HOME
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `text-[12px] font-semibold tracking-widest ${
+                  isActive
+                    ? "text-[#FF5A3C]"
+                    : "text-[#2d2d2d] hover:text-[#FF5A3C]"
+                }`
+              }
+            >
+              ABOUT US
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/projects"
+              className={({ isActive }) =>
+                `text-[12px] font-semibold tracking-widest ${
+                  isActive
+                    ? "text-[#FF5A3C]"
+                    : "text-[#2d2d2d] hover:text-[#FF5A3C]"
+                }`
+              }
+            >
+              PROJECTS
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/contact"
+              className={({ isActive }) =>
+                `text-[12px] font-semibold tracking-widest ${
+                  isActive
+                    ? "text-[#FF5A3C]"
+                    : "text-[#2d2d2d] hover:text-[#FF5A3C]"
+                }`
+              }
+            >
+              CONTACT US
+            </NavLink>
+          </li>
         </ul>
 
         <button className="hidden sm:inline-flex items-center gap-2 bg-[#F1F1F1] hover:bg-[#E7E7E7] rounded-full px-5 py-2 text-[14px] font-semibold text-[#1E2A5A] transition-all">
@@ -45,10 +100,53 @@ export default function Navbar() {
       <div className={`md:hidden max-w-7xl mx-auto mt-3 overflow-hidden transition-all duration-300 ${menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
         <div className="bg-white rounded-2xl px-6 py-5 flex flex-col gap-5 shadow-lg border border-gray-100">
           
-          <Link to="/" onClick={() => setMenuOpen(false)} className="text-[14px] font-semibold tracking-widest text-[#FF5A3C]">HOME</Link>
-          <Link to="/about" onClick={() => setMenuOpen(false)} className="text-[14px] font-semibold tracking-widest text-[#2d2d2d]">ABOUT US</Link>
-          <Link to="/projects" onClick={() => setMenuOpen(false)} className="text-[14px] font-semibold tracking-widest text-[#2d2d2d]">PROJECTS</Link>
-          <Link to="/contact" onClick={() => setMenuOpen(false)} className="text-[14px] font-semibold tracking-widest text-[#2d2d2d]">CONTACT US</Link>
+          <NavLink
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `text-[14px] font-semibold tracking-widest ${
+                isActive ? "text-[#FF5A3C]" : "text-[#2d2d2d]"
+              }`
+            }
+          >
+            HOME
+          </NavLink>
+
+          <NavLink
+            to="/about"
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `text-[14px] font-semibold tracking-widest ${
+                isActive ? "text-[#FF5A3C]" : "text-[#2d2d2d]"
+              }`
+            }
+          >
+            ABOUT US
+          </NavLink>
+
+          <NavLink
+            to="/projects"
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `text-[14px] font-semibold tracking-widest ${
+                isActive ? "text-[#FF5A3C]" : "text-[#2d2d2d]"
+              }`
+            }
+          >
+            PROJECTS
+          </NavLink>
+
+          <NavLink
+            to="/contact"
+            onClick={() => setMenuOpen(false)}
+            className={({ isActive }) =>
+              `text-[14px] font-semibold tracking-widest ${
+                isActive ? "text-[#FF5A3C]" : "text-[#2d2d2d]"
+              }`
+            }
+          >
+            CONTACT US
+          </NavLink>
 
           <button className="flex items-center justify-center gap-2 bg-[#F1F1F1] hover:bg-[#E7E7E7] rounded-full py-2 text-[14px] font-semibold text-[#1E2A5A] transition">
             <TbMessageCircle className="text-[18px]" />
