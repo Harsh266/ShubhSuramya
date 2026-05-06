@@ -962,7 +962,7 @@ function TestimonialCard({ testimonial, index }) {
             ? "0 24px 60px rgba(228,87,46,0.1), 0 4px 20px rgba(0,0,0,0.06)"
             : "0 4px 20px rgba(0,0,0,0.05)",
           transform: hovered
-            ? `perspective(800px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) translateZ(8px)`
+            ? `perspective(800px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg) translateZ(0px)`
             : "perspective(800px) rotateX(0) rotateY(0) translateZ(0)",
           transition: hovered
             ? "box-shadow 0.3s, transform 0.12s"
@@ -1058,7 +1058,7 @@ function TestimonialsSection() {
   }, [autoPlay]);
 
   return (
-    <section className="bg-[#F8F7F4] py-14 sm:py-24 px-4 sm:px-6 overflow-hidden">
+    <section className="bg-[#F8F7F4] py-14 sm:py-24 px-4 sm:px-6 overflow-x-hidden overflow-y-visible relative">
       <div className="max-w-6xl mx-auto">
         {/* Heading */}
         <div
@@ -1106,14 +1106,17 @@ function TestimonialsSection() {
         </div>
 
         {/* Mobile Carousel */}
-        <div className="sm:hidden">
+        <div className="sm:hidden overflow-hidden w-full max-w-full">
           <div className="overflow-hidden">
             <div
-              className="flex w-full transition-transform duration-500 ease-out"
+              className="flex w-full max-w-full transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${activeIndex * 100}%)` }}
             >
               {testimonials.map((t) => (
-                <div key={t.id} className="w-full flex-shrink-0 px-1">
+                <div
+  key={t.id}
+  className="w-full min-w-full max-w-full flex-shrink-0 px-1 overflow-hidden"
+>
                   <TestimonialCard testimonial={t} index={0} />
                 </div>
               ))}
@@ -1223,17 +1226,31 @@ export default function About() {
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        img,
+html,
+body,
+#root {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  position: relative;
+}
+
+img,
 video,
 iframe {
   max-width: 100%;
   height: auto;
+  display: block;
 }
 
 section,
 div {
   min-width: 0;
+  max-width: 100%;
 }
+  
 
         @keyframes scrollDrop {
           0%   { transform:translateY(-100%); opacity:0; }
