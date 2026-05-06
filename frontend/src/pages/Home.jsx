@@ -796,7 +796,7 @@ export default function Home() {
               </FadeUp>
               <FadeUp delay={80}>
                 <h2
-                  className="font-black text-[#1E2A5A] leading-tight tracking-tight"
+                  className="font-semibold text-[#1E2A5A] leading-tight tracking-tight"
                   style={{ fontSize: "clamp(22px,3.5vw,44px)" }}
                 >
                   Featured Projects
@@ -1089,7 +1089,7 @@ export default function Home() {
                   Insights
                 </p>
                 <h2
-                  className="font-manrope font-black text-[#1E2A5A] leading-tight tracking-tight"
+                  className="font-semibold text-[#1E2A5A] leading-tight tracking-tight"
                   style={{ fontSize: "clamp(22px, 3.5vw, 40px)" }}
                 >
                   Related Articles
