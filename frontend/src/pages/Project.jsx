@@ -222,6 +222,8 @@ function ProjectCard({ project, index, onSelect }) {
       className="relative w-full overflow-hidden cursor-pointer"
       style={{
         height: "560px",
+width: "100%",
+maxWidth: "100%",
         borderRadius: "20px",
         background: "#fff",
         border: "1px solid #e5e7eb",
@@ -241,7 +243,7 @@ function ProjectCard({ project, index, onSelect }) {
         alt={project.title}
         className="absolute inset-0 w-full h-full object-cover"
         style={{
-          transform: hovered ? "scale(1.05)" : "scale(1)",
+          transform: hovered ? "scale(1.02)" : "scale(1)",
           transition: "transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94)",
         }}
       />
@@ -442,7 +444,7 @@ function StatCard({ stat, index }) {
       }}
       className="text-center"
     >
-      <div className="text-5xl font-black text-[#E34A2F] mb-2 tracking-tight">
+      <div className="text-5xl font-regular text-[#E34A2F] mb-2 tracking-tight">
         {stat.value}
       </div>
       <div className="text-sm text-gray-500 font-medium uppercase tracking-widest">
@@ -745,6 +747,23 @@ useEffect(() => {
 
         *, *::before, *::after { box-sizing: border-box; }
 
+        html,
+body,
+#root {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+section,
+div {
+  min-width: 0;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
         @keyframes scrollDrop {
           0%   { transform:translateY(-100%); opacity:0; }
           25%  { opacity:1; }
@@ -1027,7 +1046,7 @@ useEffect(() => {
       )}
 
       {/* ── HERO ── */}
-      <section className="relative w-full h-screen overflow-hidden bg-black flex flex-col items-center justify-center">
+<section className="relative w-full h-screen overflow-x-hidden overflow-y-hidden bg-black flex flex-col items-center justify-center">
         <div
           className={`absolute inset-0 bg-cover bg-top transition-transform duration-[14000ms] ease-out ${loaded ? "scale-100" : "scale-110"}`}
           style={{
@@ -1113,7 +1132,7 @@ useEffect(() => {
       </section>
 
       {/* ── PROJECTS SECTION ── */}
-      <section className="bg-[#F8F7F4] py-24 px-4">
+      <section className="bg-[#F8F7F4] py-24 px-4 overflow-hidden">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-14 gap-6">
             <Reveal direction="left">
