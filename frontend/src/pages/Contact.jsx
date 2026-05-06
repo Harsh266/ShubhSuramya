@@ -15,6 +15,22 @@ function useInView(threshold = 0.12) {
     return () => obs.disconnect();
   }, []);
   return [ref, inView];
+  
+}
+
+function useScrollProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const scrollTop = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(docHeight > 0 ? scrollTop / docHeight : 0);
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+  return progress;
 }
 
 // ── Decorative floating shape ─────────────────────────────────────
@@ -96,7 +112,7 @@ function ContactForm() {
       }}
       className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-10"
     >
-      <h3 className="text-2xl font-black text-gray-900 mb-1">Send us a message</h3>
+      <h3 className="text-2xl font-semibold text-gray-900 mb-1">Send us a message</h3>
       <p className="text-gray-400 text-sm mb-8">We'll get back to you within one business day.</p>
 
       {submitted && (
@@ -196,6 +212,34 @@ export default function Contact() {
   const [loaded, setLoaded] = useState(false);
   const [heroRef, heroInView] = useInView(0.1);
   const [officeRef, officeInView] = useInView(0.1);
+    const scrollProgress = useScrollProgress();
+    const [showScrollTop, setShowScrollTop] = useState(false);
+  
+    useEffect(() => {
+      const t = setTimeout(() => setLoaded(true), 50);
+      return () => clearTimeout(t);
+    }, []);
+  
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+  
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 400);
+  
+    window.addEventListener("scroll", onScroll, { passive: true });
+  
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+      useEffect(() => {
+        const onScroll = () => setShowScrollTop(window.scrollY > 400);
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+      }, []);
+
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 60);
@@ -227,6 +271,292 @@ export default function Contact() {
     <>
       <Navbar />
 
+      
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800;900&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        @keyframes scrollDrop {
+          0%   { transform:translateY(-100%); opacity:0; }
+          25%  { opacity:1; }
+          100% { transform:translateY(260%); opacity:0; }
+        }
+        @keyframes floatBadge {
+          0%,100% { transform:translateY(0); }
+          50%     { transform:translateY(-5px); }
+        }
+        @keyframes shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
+        }
+        @keyframes pulseRing {
+          0%   { transform: scale(1); opacity: 0.6; }
+          100% { transform: scale(1.8); opacity: 0; }
+        }
+        @keyframes rotateOrbit {
+          from { transform: rotate(0deg) translateX(22px) rotate(0deg); }
+          to   { transform: rotate(360deg) translateX(22px) rotate(-360deg); }
+        }
+        @keyframes heroFadeIn {
+          from { opacity: 0; transform: translateY(40px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes lineDraw {
+          from { width: 0; }
+          to   { width: 48px; }
+        }
+        @keyframes fadeInBadge {
+          from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes countUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatCard {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          33%      { transform: translateY(-8px) rotate(0.5deg); }
+          66%      { transform: translateY(-4px) rotate(-0.5deg); }
+        }
+        @keyframes glowPulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(227,74,47,0.2); }
+          50%       { box-shadow: 0 0 40px rgba(227,74,47,0.4), 0 0 80px rgba(227,74,47,0.1); }
+        }
+        @keyframes slideProgress {
+          from { transform: scaleX(0); }
+          to   { transform: scaleX(1); }
+        }
+        @keyframes morphBlob {
+          0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+          33%       { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+          66%       { border-radius: 50% 60% 30% 60% / 30% 60% 70% 50%; }
+        }
+        @keyframes textReveal {
+          from { clip-path: inset(0 100% 0 0); }
+          to   { clip-path: inset(0 0% 0 0); }
+        }
+        @keyframes spin3D {
+          from { transform: rotateY(0deg); }
+          to   { transform: rotateY(360deg); }
+        }
+        @keyframes scrollLineDrop {
+          0%   { transform: translateY(-100%); opacity: 0; }
+          20%  { opacity: 1; }
+          80%  { opacity: 1; }
+          100% { transform: translateY(200%); opacity: 0; }
+        }
+        @keyframes scrollTopReveal {
+          from { opacity: 0; transform: translateY(16px) scale(0.85); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes scrollTopBounce {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-4px); }
+        }
+        @keyframes float3D {
+          0%, 100% { transform: perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0); }
+          25%      { transform: perspective(600px) rotateX(2deg) rotateY(3deg) translateZ(8px); }
+          50%      { transform: perspective(600px) rotateX(-1deg) rotateY(-2deg) translateZ(4px); }
+          75%      { transform: perspective(600px) rotateX(1.5deg) rotateY(-3deg) translateZ(6px); }
+        }
+        @keyframes depthPulse {
+          0%, 100% { transform: perspective(800px) translateZ(0px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+          50%      { transform: perspective(800px) translateZ(10px); box-shadow: 0 12px 40px rgba(227,74,47,0.15); }
+        }
+        @keyframes borderTrail {
+          0%   { clip-path: inset(0 100% 100% 0); }
+          25%  { clip-path: inset(0 0 100% 0); }
+          50%  { clip-path: inset(0 0 0 0); }
+          100% { clip-path: inset(0 0 0 0); }
+        }
+        @keyframes statsCountReveal {
+          from { opacity:0; transform: perspective(400px) rotateX(40deg) translateY(20px); }
+          to   { opacity:1; transform: perspective(400px) rotateX(0deg) translateY(0); }
+        }
+        @keyframes waveIn {
+          0%   { transform: scaleY(0) translateY(100%); opacity: 0; }
+          60%  { transform: scaleY(1.08) translateY(-3%); opacity: 1; }
+          100% { transform: scaleY(1) translateY(0); opacity: 1; }
+        }
+        @keyframes processArrowPulse {
+          0%,100% { opacity: 0.4; transform: translateX(0); }
+          50%     { opacity: 1;   transform: translateX(6px); }
+        }
+        @keyframes heroLineGrow {
+          from { width: 0; opacity: 0; }
+          to   { width: 48px; opacity: 1; }
+        }
+        @keyframes heroContentIn {
+          0%   { opacity: 0; transform: translateY(50px) scale(0.97); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes badgePop {
+          0%   { opacity: 0; transform: scale(0.7) translateY(10px); }
+          70%  { transform: scale(1.05) translateY(-2px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes rotateSlowly {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+
+        /* ── Hero entrance ── */
+        .hero-badge   { animation: badgePop 0.7s cubic-bezier(.34,1.56,.64,1) 0.4s both; }
+        .hero-h1      { animation: heroContentIn 0.9s cubic-bezier(.22,1,.36,1) 0.65s both; }
+        .hero-line    { animation: heroLineGrow 0.6s cubic-bezier(.22,1,.36,1) 1.1s both; }
+        .hero-p       { animation: heroContentIn 0.8s cubic-bezier(.22,1,.36,1) 1.2s both; }
+
+        /* ── Scroll line ── */
+        .scroll-line {
+          animation: scrollLineDrop 1.8s ease-in-out infinite;
+        }
+        .scroll-down-indicator {
+          animation: heroFadeIn 0.8s ease 1.8s both;
+        }
+
+        /* ── Scroll-to-top ── */
+        .scroll-top-btn {
+          animation: scrollTopReveal 0.4s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        .scroll-top-btn:hover .scroll-top-arrow {
+          animation: scrollTopBounce 0.6s ease infinite;
+        }
+
+        /* ── Blog card ── */
+        .blog-card {
+          transition: transform 0.35s cubic-bezier(.22,1,.36,1);
+        }
+        .blog-card:hover {
+          transform: translateY(-6px);
+        }
+        .blog-img {
+          transition: transform 0.6s cubic-bezier(.22,1,.36,1);
+        }
+        .blog-card:hover .blog-img {
+          transform: scale(1.07);
+        }
+
+        /* ── Process card ── */
+        .process-card {
+          transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s ease;
+        }
+        .process-card:hover {
+          transform: translateY(-8px) perspective(600px) rotateX(3deg);
+          box-shadow: 0 24px 48px rgba(0,0,0,0.1);
+        }
+
+        /* ── Hero scroll ── */
+        .hero-scroll-indicator {
+          animation: scrollDrop 2s ease-in-out infinite 2s;
+        }
+
+        /* ── Floating ── */
+        .floating-badge {
+          animation: floatBadge 3s ease-in-out infinite;
+        }
+
+        /* ── Blob ── */
+        .blob-bg {
+          animation: morphBlob 8s ease-in-out infinite;
+        }
+
+        /* ── 3D floating card ── */
+        .float-3d {
+          animation: float3D 6s ease-in-out infinite;
+        }
+
+        /* ── Stat card depth ── */
+        .stat-depth {
+          animation: depthPulse 4s ease-in-out infinite;
+        }
+
+        /* ── Process arrow ── */
+        .process-arrow {
+          animation: processArrowPulse 1.6s ease-in-out infinite;
+        }
+
+        /* ── Slowly rotating deco ring ── */
+        .ring-rotate {
+          animation: rotateSlowly 18s linear infinite;
+        }
+
+        /* ── Perspective container ── */
+        .perspective-container {
+          perspective: 1200px;
+          perspective-origin: center center;
+        }
+
+        /* ── Feature card interactive 3D ── */
+        .feature-card-3d {
+          transition: transform 0.25s cubic-bezier(.22,1,.36,1), box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        /* ── Stats 3D section reveal ── */
+        .stats-3d-reveal {
+          transform-style: preserve-3d;
+        }
+
+        /* ── Scroll progress bar ── */
+        .scroll-progress-bar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #E34A2F, #ffb347);
+          z-index: 9999;
+          transition: width 0.1s linear;
+        }
+
+        /* ── Smooth scrolling ── */
+        html { scroll-behavior: smooth; }
+
+        /* ── Custom scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #FDFAF6; }
+        ::-webkit-scrollbar-thumb { background: #E34A2F; border-radius: 3px; }
+
+        /* ── Project card image ── */
+        .project-card img {
+          transition: transform 0.6s cubic-bezier(.22,1,.36,1);
+        }
+
+        /* ── Responsive video section ── */
+        @media (max-width: 640px) {
+          .hero-content { padding-bottom: 80px !important; }
+        }
+
+        /* ── Mobile tap ── */
+        @media (hover: none) {
+          .feature-card:hover { transform: none; }
+          .stat-card:hover { transform: none; }
+          .process-card:hover { transform: none; }
+        }
+      `}</style>
+
+      {/* ── SCROLL PROGRESS BAR ── */}
+      <div
+        className="scroll-progress-bar"
+        style={{ width: `${scrollProgress * 100}%` }}
+      />
+
+      {/* ── SCROLL TO TOP BUTTON ── */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="scroll-top-btn fixed bottom-6 right-5 sm:bottom-8 sm:right-8 z-[9000] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#E34A2F] flex items-center justify-center shadow-lg hover:bg-[#c73b22] transition-colors duration-200 cursor-pointer"
+          style={{ boxShadow: "0 4px 20px rgba(227,74,47,0.4)" }}
+          aria-label="Scroll to top"
+        >
+          <span className="scroll-top-arrow flex items-center justify-center text-white">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+          </span>
+        </button>
+      )}
+
       {/* ── HERO / CONNECT SECTION ── */}
       <section className="relative px-4 overflow-hidden w-full h-screen flex flex-col items-center justify-center">
 
@@ -242,13 +572,6 @@ export default function Contact() {
   {/* Black Gradient Overlay */}
   <div className="absolute inset-0 bg-black/60" />
 
-  {/* Decorative shapes */}
-  <Shape type="plus"  color="#E34A2F"  style={{ top: "18%",  left: "22%",  opacity: 0.7 }} />
-  <Shape type="plus"  color="#f0c040"  style={{ top: "55%",  left: "18%",  opacity: 0.8 }} />
-  <Shape type="plus"  color="#E34A2F"  style={{ top: "22%",  right: "10%", opacity: 0.65 }} />
-  <Shape type="arc"   color="#E34A2F"  style={{ top: "14%",  left: "13%",  opacity: 0.5, transform: "rotate(-15deg)" }} />
-  <Shape type="arc"   color="#f0c040"  style={{ top: "12%",  right: "16%", opacity: 0.6, transform: "scaleX(-1)" }} />
-  <Shape type="arc"   color="#aaa"     style={{ top: "50%",  right: "8%",  opacity: 0.4, transform: "rotate(20deg)" }} />
 
   {/* Content */}
   <div
@@ -267,7 +590,7 @@ export default function Contact() {
       <span className="text-white">Contact</span>
     </nav>
 
-    <h1 className="text-white font-black text-4xl sm:text-5xl md:text-6xl leading-tight mb-5">
+    <h1 className="text-white font-Regular text-4xl sm:text-5xl md:text-6xl leading-tight mb-5">
       Let's <span className="text-[#E34A2F]">Connect</span> With Us
     </h1>
 
@@ -323,7 +646,7 @@ export default function Contact() {
               }}
             >
               <span className="text-[#E34A2F] text-xs font-bold tracking-[0.3em] uppercase mb-3 block">Our Offices</span>
-              <h2 className="text-gray-900 font-black text-3xl sm:text-4xl mb-8 leading-tight">
+              <h2 className="text-gray-900 font-semibold text-3xl sm:text-4xl mb-8 leading-tight">
                 Some of our<br />office locations
               </h2>
             </div>
@@ -365,7 +688,7 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-[#E34A2F] text-xs font-bold tracking-[0.3em] uppercase mb-3 block">Find Us</span>
-            <h2 className="text-gray-900 font-black text-3xl sm:text-4xl">
+            <h2 className="text-gray-900 font-semibold text-3xl sm:text-4xl">
               Visit our offices on the map
             </h2>
             <p className="text-gray-400 text-sm mt-3 max-w-md mx-auto">

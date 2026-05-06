@@ -19,6 +19,21 @@ function useScrollReveal(options = {}) {
   return [ref, visible];
 }
 
+function useScrollProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const scrollTop = window.scrollY;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(docHeight > 0 ? scrollTop / docHeight : 0);
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+  return progress;
+}
+
 /* ─── Parallax Hook ─── */
 function useParallax(speed = 0.3) {
   const ref = useRef(null);
@@ -112,6 +127,33 @@ export default function ProjectDetailPage({
   const [loaded, setLoaded] = useState(false);
   const videoRef = useRef(null);
   const parallaxBg = useParallax(0.18);
+      const scrollProgress = useScrollProgress();
+      const [showScrollTop, setShowScrollTop] = useState(false);
+    
+      useEffect(() => {
+        const t = setTimeout(() => setLoaded(true), 50);
+        return () => clearTimeout(t);
+      }, []);
+    
+    const scrollToTop = () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    };
+    
+    useEffect(() => {
+      const onScroll = () => setShowScrollTop(window.scrollY > 400);
+    
+      window.addEventListener("scroll", onScroll, { passive: true });
+    
+      return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+        useEffect(() => {
+          const onScroll = () => setShowScrollTop(window.scrollY > 400);
+          window.addEventListener("scroll", onScroll, { passive: true });
+          return () => window.removeEventListener("scroll", onScroll);
+        }, []);
 
   const amenities = [
     { label: "Swimming Pool", img: "https://images.pexels.com/photos/14548470/pexels-photo-14548470.png", tall: true },
@@ -186,49 +228,312 @@ export default function ProjectDetailPage({
 
   return (
     <>
+      {/* ── Navbar ── */}
+      <Navbar />  
+
       <style>{`
-        @keyframes float-up { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        @keyframes pulse-ring { 0%{transform:scale(1);opacity:0.6} 100%{transform:scale(1.5);opacity:0} }
-        @keyframes shimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
-        @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        @keyframes slide-in-tag { from{opacity:0;transform:translateY(20px) scale(0.9)} to{opacity:1;transform:translateY(0) scale(1)} }
-        @keyframes counter-up { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes fade-slide { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
-        .float-anim { animation: float-up 4s ease-in-out infinite; }
-        .tilt-card { transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease; transform-style: preserve-3d; }
-        .tilt-card:hover { box-shadow: 0 32px 64px rgba(0,0,0,0.18); }
-        .amenity-card { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.5s ease; }
-        .amenity-card:hover { transform: translateY(-8px) scale(1.015); box-shadow: 0 24px 48px rgba(0,0,0,0.14); }
-        .gallery-img { transition: flex 0.55s cubic-bezier(0.4,0,0.2,1), filter 0.4s ease; }
-        .gallery-img:not(:hover) { filter: saturate(0.7) brightness(0.92); }
-        .gallery-img:hover { filter: saturate(1.1) brightness(1.05); }
-        .room-thumb { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .room-thumb:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
-        .floor-btn { transition: all 0.25s cubic-bezier(0.22,1,0.36,1); }
-        .floor-btn:hover { transform: translateX(4px); }
-        .stats-counter { animation: counter-up 0.6s ease both; }
-        .nearby-row { transition: all 0.2s ease; }
-        .nearby-row:hover { transform: translateX(4px); }
-        .tag-pill { animation: slide-in-tag 0.6s cubic-bezier(0.22,1,0.36,1) both; }
-        .scroll-indicator { animation: float-up 2s ease-in-out infinite; }
-        .room-img-fade { transition: opacity 0.2s ease, transform 0.5s ease; }
-        .room-img-fade.changing { opacity: 0; transform: scale(1.04); }
-        .section-divider { background: linear-gradient(90deg, transparent, #E4572E40, transparent); height: 1px; }
-        .hero-text-char { display: inline-block; animation: slide-in-tag 0.7s cubic-bezier(0.22,1,0.36,1) both; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .perspective-card { perspective: 1000px; }
-        .inner-3d { transition: transform 0.4s cubic-bezier(0.22,1,0.36,1); transform-style: preserve-3d; }
-        .stat-card { transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease; }
-        .stat-card:hover { transform: translateY(-6px) scale(1.03) perspective(600px) rotateX(4deg); box-shadow: 0 20px 40px rgba(228,87,46,0.15); }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800;900&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        @keyframes scrollDrop {
+          0%   { transform:translateY(-100%); opacity:0; }
+          25%  { opacity:1; }
+          100% { transform:translateY(260%); opacity:0; }
+        }
+        @keyframes floatBadge {
+          0%,100% { transform:translateY(0); }
+          50%     { transform:translateY(-5px); }
+        }
+        @keyframes shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
+        }
+        @keyframes pulseRing {
+          0%   { transform: scale(1); opacity: 0.6; }
+          100% { transform: scale(1.8); opacity: 0; }
+        }
+        @keyframes rotateOrbit {
+          from { transform: rotate(0deg) translateX(22px) rotate(0deg); }
+          to   { transform: rotate(360deg) translateX(22px) rotate(-360deg); }
+        }
+        @keyframes heroFadeIn {
+          from { opacity: 0; transform: translateY(40px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes lineDraw {
+          from { width: 0; }
+          to   { width: 48px; }
+        }
+        @keyframes fadeInBadge {
+          from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes countUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatCard {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          33%      { transform: translateY(-8px) rotate(0.5deg); }
+          66%      { transform: translateY(-4px) rotate(-0.5deg); }
+        }
+        @keyframes glowPulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(227,74,47,0.2); }
+          50%       { box-shadow: 0 0 40px rgba(227,74,47,0.4), 0 0 80px rgba(227,74,47,0.1); }
+        }
+        @keyframes slideProgress {
+          from { transform: scaleX(0); }
+          to   { transform: scaleX(1); }
+        }
+        @keyframes morphBlob {
+          0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+          33%       { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+          66%       { border-radius: 50% 60% 30% 60% / 30% 60% 70% 50%; }
+        }
+        @keyframes textReveal {
+          from { clip-path: inset(0 100% 0 0); }
+          to   { clip-path: inset(0 0% 0 0); }
+        }
+        @keyframes spin3D {
+          from { transform: rotateY(0deg); }
+          to   { transform: rotateY(360deg); }
+        }
+        @keyframes scrollLineDrop {
+          0%   { transform: translateY(-100%); opacity: 0; }
+          20%  { opacity: 1; }
+          80%  { opacity: 1; }
+          100% { transform: translateY(200%); opacity: 0; }
+        }
+        @keyframes scrollTopReveal {
+          from { opacity: 0; transform: translateY(16px) scale(0.85); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes scrollTopBounce {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-4px); }
+        }
+        @keyframes float3D {
+          0%, 100% { transform: perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0); }
+          25%      { transform: perspective(600px) rotateX(2deg) rotateY(3deg) translateZ(8px); }
+          50%      { transform: perspective(600px) rotateX(-1deg) rotateY(-2deg) translateZ(4px); }
+          75%      { transform: perspective(600px) rotateX(1.5deg) rotateY(-3deg) translateZ(6px); }
+        }
+        @keyframes depthPulse {
+          0%, 100% { transform: perspective(800px) translateZ(0px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+          50%      { transform: perspective(800px) translateZ(10px); box-shadow: 0 12px 40px rgba(227,74,47,0.15); }
+        }
+        @keyframes borderTrail {
+          0%   { clip-path: inset(0 100% 100% 0); }
+          25%  { clip-path: inset(0 0 100% 0); }
+          50%  { clip-path: inset(0 0 0 0); }
+          100% { clip-path: inset(0 0 0 0); }
+        }
+        @keyframes statsCountReveal {
+          from { opacity:0; transform: perspective(400px) rotateX(40deg) translateY(20px); }
+          to   { opacity:1; transform: perspective(400px) rotateX(0deg) translateY(0); }
+        }
+        @keyframes waveIn {
+          0%   { transform: scaleY(0) translateY(100%); opacity: 0; }
+          60%  { transform: scaleY(1.08) translateY(-3%); opacity: 1; }
+          100% { transform: scaleY(1) translateY(0); opacity: 1; }
+        }
+        @keyframes processArrowPulse {
+          0%,100% { opacity: 0.4; transform: translateX(0); }
+          50%     { opacity: 1;   transform: translateX(6px); }
+        }
+        @keyframes heroLineGrow {
+          from { width: 0; opacity: 0; }
+          to   { width: 48px; opacity: 1; }
+        }
+        @keyframes heroContentIn {
+          0%   { opacity: 0; transform: translateY(50px) scale(0.97); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes badgePop {
+          0%   { opacity: 0; transform: scale(0.7) translateY(10px); }
+          70%  { transform: scale(1.05) translateY(-2px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes rotateSlowly {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+
+        /* ── Hero entrance ── */
+        .hero-badge   { animation: badgePop 0.7s cubic-bezier(.34,1.56,.64,1) 0.4s both; }
+        .hero-h1      { animation: heroContentIn 0.9s cubic-bezier(.22,1,.36,1) 0.65s both; }
+        .hero-line    { animation: heroLineGrow 0.6s cubic-bezier(.22,1,.36,1) 1.1s both; }
+        .hero-p       { animation: heroContentIn 0.8s cubic-bezier(.22,1,.36,1) 1.2s both; }
+
+        /* ── Scroll line ── */
+        .scroll-line {
+          animation: scrollLineDrop 1.8s ease-in-out infinite;
+        }
+        .scroll-down-indicator {
+          animation: heroFadeIn 0.8s ease 1.8s both;
+        }
+
+        /* ── Scroll-to-top ── */
+        .scroll-top-btn {
+          animation: scrollTopReveal 0.4s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        .scroll-top-btn:hover .scroll-top-arrow {
+          animation: scrollTopBounce 0.6s ease infinite;
+        }
+
+        /* ── Blog card ── */
+        .blog-card {
+          transition: transform 0.35s cubic-bezier(.22,1,.36,1);
+        }
+        .blog-card:hover {
+          transform: translateY(-6px);
+        }
+        .blog-img {
+          transition: transform 0.6s cubic-bezier(.22,1,.36,1);
+        }
+        .blog-card:hover .blog-img {
+          transform: scale(1.07);
+        }
+
+        /* ── Process card ── */
+        .process-card {
+          transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s ease;
+        }
+        .process-card:hover {
+          transform: translateY(-8px) perspective(600px) rotateX(3deg);
+          box-shadow: 0 24px 48px rgba(0,0,0,0.1);
+        }
+
+        /* ── Hero scroll ── */
+        .hero-scroll-indicator {
+          animation: scrollDrop 2s ease-in-out infinite 2s;
+        }
+
+        /* ── Floating ── */
+        .floating-badge {
+          animation: floatBadge 3s ease-in-out infinite;
+        }
+
+        /* ── Blob ── */
+        .blob-bg {
+          animation: morphBlob 8s ease-in-out infinite;
+        }
+
+        /* ── 3D floating card ── */
+        .float-3d {
+          animation: float3D 6s ease-in-out infinite;
+        }
+
+        /* ── Stat card depth ── */
+        .stat-depth {
+          animation: depthPulse 4s ease-in-out infinite;
+        }
+
+        /* ── Process arrow ── */
+        .process-arrow {
+          animation: processArrowPulse 1.6s ease-in-out infinite;
+        }
+
+        /* ── Slowly rotating deco ring ── */
+        .ring-rotate {
+          animation: rotateSlowly 18s linear infinite;
+        }
+
+        /* ── Perspective container ── */
+        .perspective-container {
+          perspective: 1200px;
+          perspective-origin: center center;
+        }
+
+        /* ── Feature card interactive 3D ── */
+        .feature-card-3d {
+          transition: transform 0.25s cubic-bezier(.22,1,.36,1), box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        /* ── Stats 3D section reveal ── */
+        .stats-3d-reveal {
+          transform-style: preserve-3d;
+        }
+
+        /* ── Scroll progress bar ── */
+        .scroll-progress-bar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #E34A2F, #ffb347);
+          z-index: 9999;
+          transition: width 0.1s linear;
+        }
+
+        /* ── Smooth scrolling ── */
+        html { scroll-behavior: smooth; }
+
+        /* ── Custom scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #FDFAF6; }
+        ::-webkit-scrollbar-thumb { background: #E34A2F; border-radius: 3px; }
+
+        /* ── Project card image ── */
+        .project-card img {
+          transition: transform 0.6s cubic-bezier(.22,1,.36,1);
+        }
+
+        /* ── Responsive video section ── */
+        @media (max-width: 640px) {
+          .hero-content { padding-bottom: 80px !important; }
+        }
+
+        /* ── Mobile tap ── */
+        @media (hover: none) {
+          .feature-card:hover { transform: none; }
+          .stat-card:hover { transform: none; }
+          .process-card:hover { transform: none; }
+        }
+          *, *::before, *::after { box-sizing: border-box; }
+
+          html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+#root {
+  overflow-x: hidden;
+  width: 100%;
+}
       `}</style>
 
-      {/* ── Navbar ── */}
-      <Navbar />
+      {/* ── SCROLL PROGRESS BAR ── */}
+      <div
+        className="scroll-progress-bar"
+        style={{ width: `${scrollProgress * 100}%` }}
+      />
+
+      {/* ── SCROLL TO TOP BUTTON ── */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="scroll-top-btn fixed bottom-6 right-5 sm:bottom-8 sm:right-8 z-[9000] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#E34A2F] flex items-center justify-center shadow-lg hover:bg-[#c73b22] transition-colors duration-200 cursor-pointer"
+          style={{ boxShadow: "0 4px 20px rgba(227,74,47,0.4)" }}
+          aria-label="Scroll to top"
+        >
+          <span className="scroll-top-arrow flex items-center justify-center text-white">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+          </span>
+        </button>
+      )}
+
 
       {/* ── Hero Section ── */}
       <section className="relative w-full h-screen min-h-[500px] overflow-hidden bg-black flex flex-col items-center justify-center">
-        <div ref={parallaxBg} className="absolute inset-0 scale-110">
+        <div
+  ref={parallaxBg}
+  className="absolute inset-0 scale-100 overflow-hidden"
+>
           <video
             ref={videoRef}
             className={`w-full h-full object-cover transition-transform duration-[14000ms] ease-out ${loaded ? "scale-100" : "scale-105"}`}
@@ -331,7 +636,7 @@ export default function ProjectDetailPage({
       <div className="section-divider mx-4 sm:mx-0" />
 
       {/* ── About Section ── */}
-      <section className="w-full py-14 sm:py-20 px-4 sm:px-8 md:px-16 bg-[#F8F7F4]">
+      <section className="w-full py-14 sm:py-20 px-4 sm:px-8 md:px-16 bg-[#F8F7F4] overflow-hidden">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-stretch">
           {/* Left: Image with 3D tilt */}
           <Reveal direction="left" delay={100}>
@@ -379,7 +684,7 @@ export default function ProjectDetailPage({
         </Reveal>
 
         {/* Desktop */}
-        <div className="hidden md:flex w-full items-center justify-center gap-4">
+        <div className="hidden md:flex w-full items-center justify-center gap-4 overflow-hidden">
           {amenities.map(({ label, img, tall }, i) => (
             <Reveal key={label} delay={i * 120} direction="up">
               <div className={`amenity-card relative rounded-[20px] overflow-hidden group cursor-pointer w-20 ${tall ? "h-[420px]" : "h-[360px]"}`}
@@ -535,7 +840,7 @@ export default function ProjectDetailPage({
 
         {/* Desktop */}
         <Reveal direction="up" delay={200}>
-          <div className="hidden sm:flex gap-2 h-[400px] md:h-[480px] items-stretch">
+          <div className="hidden sm:flex gap-2 h-[400px] md:h-[480px] items-stretch overflow-hidden w-full">
             {images.map((img) => (
               <div key={img.id} className="gallery-img relative overflow-hidden rounded-2xl cursor-pointer"
                 style={{ flex: getFlex(img.id), transition: "flex 0.5s cubic-bezier(0.4,0,0.2,1)" }}
