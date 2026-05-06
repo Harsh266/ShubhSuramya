@@ -130,6 +130,68 @@ function SlideInRight({ children, delay = 0, className = "" }) {
   );
 }
 
+/* ─── FLIP IN FROM BOTTOM (3D) ─── */
+function FlipInUp({ children, delay = 0, className = "" }) {
+  const [ref, visible] = useInView(0.08);
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible
+          ? "perspective(800px) rotateX(0deg) translateY(0)"
+          : "perspective(800px) rotateX(30deg) translateY(40px)",
+        transition: `opacity 0.75s cubic-bezier(.22,1,.36,1) ${delay}ms, transform 0.75s cubic-bezier(.22,1,.36,1) ${delay}ms`,
+        transformOrigin: "bottom center",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── ZOOM IN 3D ─── */
+function ZoomIn3D({ children, delay = 0, className = "" }) {
+  const [ref, visible] = useInView(0.08);
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible
+          ? "perspective(1000px) scale(1) rotateY(0deg)"
+          : "perspective(1000px) scale(0.8) rotateY(-15deg)",
+        transition: `opacity 0.9s cubic-bezier(.22,1,.36,1) ${delay}ms, transform 0.9s cubic-bezier(.22,1,.36,1) ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ─── STAGGER FADE (alternating left/right) ─── */
+function StaggerSide({ children, index = 0, delay = 0, className = "" }) {
+  const [ref, visible] = useInView(0.08);
+  const fromLeft = index % 2 === 0;
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible
+          ? "translateX(0) translateY(0)"
+          : `translateX(${fromLeft ? -60 : 60}px) translateY(20px)`,
+        transition: `opacity 0.8s cubic-bezier(.22,1,.36,1) ${delay}ms, transform 0.8s cubic-bezier(.22,1,.36,1) ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* ─── 3D TILT CARD ─── */
 function TiltCard({ children, className = "", style = {} }) {
   const ref = useRef(null);
@@ -172,7 +234,7 @@ function AnimatedCounter({ target, suffix = "" }) {
   const [count, setCount] = useState(0);
   const [ref, visible] = useInView(0.3);
 
-  const safeTarget = String(target); // ✅ FIX
+  const safeTarget = String(target);
 
   useEffect(() => {
     if (!visible) return;
@@ -197,7 +259,6 @@ function AnimatedCounter({ target, suffix = "" }) {
     requestAnimationFrame(step);
   }, [visible, safeTarget]);
 
-  // ✅ also fix here
   const prefix = safeTarget.replace(/[0-9.]+.*/, "");
   const suf = safeTarget.replace(/^[^0-9]*[0-9.]+/, "");
 
@@ -207,6 +268,18 @@ function AnimatedCounter({ target, suffix = "" }) {
       {count}
       {suf || suffix}
     </span>
+  );
+}
+
+/* ─── SCROLL DOWN INDICATOR ─── */
+function ScrollIndicator() {
+  return (
+    <div className="scroll-down-indicator flex flex-col items-center gap-1.5">
+      <span className="text-white/50 text-[9px] tracking-[2px] uppercase">Scroll</span>
+      <div className="relative w-[1px] h-10 bg-white/20 overflow-hidden rounded-full">
+        <div className="scroll-line absolute top-0 left-0 w-full bg-white/70 rounded-full" style={{ height: "40%" }} />
+      </div>
+    </div>
   );
 }
 
@@ -319,6 +392,16 @@ export default function Home() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  /* Scroll-to-top button visibility */
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const PROJECTS = [
     {
@@ -453,7 +536,90 @@ export default function Home() {
           from { transform: rotateY(0deg); }
           to   { transform: rotateY(360deg); }
         }
+        @keyframes scrollLineDrop {
+          0%   { transform: translateY(-100%); opacity: 0; }
+          20%  { opacity: 1; }
+          80%  { opacity: 1; }
+          100% { transform: translateY(200%); opacity: 0; }
+        }
+        @keyframes scrollTopReveal {
+          from { opacity: 0; transform: translateY(16px) scale(0.85); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes scrollTopBounce {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-4px); }
+        }
+        @keyframes float3D {
+          0%, 100% { transform: perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0); }
+          25%      { transform: perspective(600px) rotateX(2deg) rotateY(3deg) translateZ(8px); }
+          50%      { transform: perspective(600px) rotateX(-1deg) rotateY(-2deg) translateZ(4px); }
+          75%      { transform: perspective(600px) rotateX(1.5deg) rotateY(-3deg) translateZ(6px); }
+        }
+        @keyframes depthPulse {
+          0%, 100% { transform: perspective(800px) translateZ(0px); box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+          50%      { transform: perspective(800px) translateZ(10px); box-shadow: 0 12px 40px rgba(227,74,47,0.15); }
+        }
+        @keyframes borderTrail {
+          0%   { clip-path: inset(0 100% 100% 0); }
+          25%  { clip-path: inset(0 0 100% 0); }
+          50%  { clip-path: inset(0 0 0 0); }
+          100% { clip-path: inset(0 0 0 0); }
+        }
+        @keyframes statsCountReveal {
+          from { opacity:0; transform: perspective(400px) rotateX(40deg) translateY(20px); }
+          to   { opacity:1; transform: perspective(400px) rotateX(0deg) translateY(0); }
+        }
+        @keyframes waveIn {
+          0%   { transform: scaleY(0) translateY(100%); opacity: 0; }
+          60%  { transform: scaleY(1.08) translateY(-3%); opacity: 1; }
+          100% { transform: scaleY(1) translateY(0); opacity: 1; }
+        }
+        @keyframes processArrowPulse {
+          0%,100% { opacity: 0.4; transform: translateX(0); }
+          50%     { opacity: 1;   transform: translateX(6px); }
+        }
+        @keyframes heroLineGrow {
+          from { width: 0; opacity: 0; }
+          to   { width: 48px; opacity: 1; }
+        }
+        @keyframes heroContentIn {
+          0%   { opacity: 0; transform: translateY(50px) scale(0.97); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes badgePop {
+          0%   { opacity: 0; transform: scale(0.7) translateY(10px); }
+          70%  { transform: scale(1.05) translateY(-2px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes rotateSlowly {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
 
+        /* ── Hero entrance ── */
+        .hero-badge   { animation: badgePop 0.7s cubic-bezier(.34,1.56,.64,1) 0.4s both; }
+        .hero-h1      { animation: heroContentIn 0.9s cubic-bezier(.22,1,.36,1) 0.65s both; }
+        .hero-line    { animation: heroLineGrow 0.6s cubic-bezier(.22,1,.36,1) 1.1s both; }
+        .hero-p       { animation: heroContentIn 0.8s cubic-bezier(.22,1,.36,1) 1.2s both; }
+
+        /* ── Scroll line ── */
+        .scroll-line {
+          animation: scrollLineDrop 1.8s ease-in-out infinite;
+        }
+        .scroll-down-indicator {
+          animation: heroFadeIn 0.8s ease 1.8s both;
+        }
+
+        /* ── Scroll-to-top ── */
+        .scroll-top-btn {
+          animation: scrollTopReveal 0.4s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        .scroll-top-btn:hover .scroll-top-arrow {
+          animation: scrollTopBounce 0.6s ease infinite;
+        }
+
+        /* ── Blog card ── */
         .blog-card {
           transition: transform 0.35s cubic-bezier(.22,1,.36,1);
         }
@@ -467,6 +633,7 @@ export default function Home() {
           transform: scale(1.07);
         }
 
+        /* ── Process card ── */
         .process-card {
           transition: transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s ease;
         }
@@ -475,55 +642,91 @@ export default function Home() {
           box-shadow: 0 24px 48px rgba(0,0,0,0.1);
         }
 
+        /* ── Hero scroll ── */
         .hero-scroll-indicator {
           animation: scrollDrop 2s ease-in-out infinite 2s;
         }
 
+        /* ── Floating ── */
         .floating-badge {
           animation: floatBadge 3s ease-in-out infinite;
         }
 
+        /* ── Blob ── */
         .blob-bg {
           animation: morphBlob 8s ease-in-out infinite;
         }
 
-        /* 3D perspective container */
+        /* ── 3D floating card ── */
+        .float-3d {
+          animation: float3D 6s ease-in-out infinite;
+        }
+
+        /* ── Stat card depth ── */
+        .stat-depth {
+          animation: depthPulse 4s ease-in-out infinite;
+        }
+
+        /* ── Process arrow ── */
+        .process-arrow {
+          animation: processArrowPulse 1.6s ease-in-out infinite;
+        }
+
+        /* ── Slowly rotating deco ring ── */
+        .ring-rotate {
+          animation: rotateSlowly 18s linear infinite;
+        }
+
+        /* ── Perspective container ── */
         .perspective-container {
           perspective: 1200px;
           perspective-origin: center center;
         }
 
-        /* Stagger children on section enter */
-        .stagger-children > * {
-          opacity: 0;
-          transform: translateY(24px);
-        }
-        .stagger-children.in-view > *:nth-child(1) { animation: heroFadeIn 0.6s ease forwards 0.05s; }
-        .stagger-children.in-view > *:nth-child(2) { animation: heroFadeIn 0.6s ease forwards 0.15s; }
-        .stagger-children.in-view > *:nth-child(3) { animation: heroFadeIn 0.6s ease forwards 0.25s; }
-
-        /* Mobile tap highlight */
-        @media (hover: none) {
-          .feature-card:hover { transform: none; }
-          .stat-card:hover { transform: none; }
-          .process-card:hover { transform: none; }
+        /* ── Feature card interactive 3D ── */
+        .feature-card-3d {
+          transition: transform 0.25s cubic-bezier(.22,1,.36,1), box-shadow 0.25s ease, border-color 0.25s ease;
         }
 
-        /* Smooth scrolling */
+        /* ── Stats 3D section reveal ── */
+        .stats-3d-reveal {
+          transform-style: preserve-3d;
+        }
+
+        /* ── Scroll progress bar ── */
+        .scroll-progress-bar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #E34A2F, #ffb347);
+          z-index: 9999;
+          transition: width 0.1s linear;
+        }
+
+        /* ── Smooth scrolling ── */
         html { scroll-behavior: smooth; }
 
-        /* Custom scrollbar */
+        /* ── Custom scrollbar ── */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #FDFAF6; }
         ::-webkit-scrollbar-thumb { background: #E34A2F; border-radius: 3px; }
 
+        /* ── Project card image ── */
         .project-card img {
           transition: transform 0.6s cubic-bezier(.22,1,.36,1);
         }
 
-        /* Responsive video section */
+        /* ── Responsive video section ── */
         @media (max-width: 640px) {
           .hero-content { padding-bottom: 80px !important; }
+        }
+
+        /* ── Mobile tap ── */
+        @media (hover: none) {
+          .feature-card:hover { transform: none; }
+          .stat-card:hover { transform: none; }
+          .process-card:hover { transform: none; }
         }
       `}</style>
 
@@ -532,6 +735,22 @@ export default function Home() {
         className="scroll-progress-bar"
         style={{ width: `${scrollProgress * 100}%` }}
       />
+
+      {/* ── SCROLL TO TOP BUTTON ── */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="scroll-top-btn fixed bottom-6 right-5 sm:bottom-8 sm:right-8 z-[9000] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#E34A2F] flex items-center justify-center shadow-lg hover:bg-[#c73b22] transition-colors duration-200 cursor-pointer"
+          style={{ boxShadow: "0 4px 20px rgba(227,74,47,0.4)" }}
+          aria-label="Scroll to top"
+        >
+          <span className="scroll-top-arrow flex items-center justify-center text-white">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+          </span>
+        </button>
+      )}
 
       {/* ── HERO ── */}
       <section
@@ -559,6 +778,16 @@ export default function Home() {
             backgroundRepeat: "repeat",
             backgroundSize: "128px 128px",
           }}
+        />
+
+        {/* Rotating deco rings */}
+        <div
+          className="ring-rotate absolute top-[15%] right-[8%] w-48 h-48 sm:w-72 sm:h-72 rounded-full pointer-events-none"
+          style={{ border: "1px dashed rgba(255,255,255,0.08)" }}
+        />
+        <div
+          className="ring-rotate absolute top-[12%] right-[5%] w-64 h-64 sm:w-96 sm:h-96 rounded-full pointer-events-none"
+          style={{ border: "1px solid rgba(255,90,60,0.06)", animationDirection: "reverse", animationDuration: "28s" }}
         />
 
         <Navbar />
@@ -610,6 +839,11 @@ export default function Home() {
             Discover breathtaking villas, timeless interiors, and stunning
             exteriors — all curated for those who desire more than just a home.
           </p>
+        </div>
+
+        {/* Scroll Down Indicator — bottom center */}
+        <div className="absolute bottom-7 left-1/2 -translate-x-1/2 z-20">
+          <ScrollIndicator />
         </div>
       </section>
 
@@ -694,27 +928,25 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {FEATURES.map((card, i) => (
                 <TiltCard key={card.title}>
-                  <FadeInScale delay={i * 90}>
+                  <ZoomIn3D delay={i * 90}>
                     <div
-                      className="feature-card rounded-2xl p-4 sm:p-5 border cursor-default bg-white"
+                      className="feature-card feature-card-3d rounded-2xl p-4 sm:p-5 border cursor-default bg-white"
                       style={{ borderColor: "rgba(30,42,90,.08)" }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "rgba(227,74,47,.25)";
-                        e.currentTarget.style.boxShadow =
-                          "0 8px 32px rgba(227,74,47,.08)";
+                        e.currentTarget.style.borderColor = "rgba(227,74,47,.25)";
+                        e.currentTarget.style.boxShadow = "0 8px 32px rgba(227,74,47,.08)";
+                        e.currentTarget.style.transform = "perspective(600px) translateZ(8px)";
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "rgba(30,42,90,.08)";
+                        e.currentTarget.style.borderColor = "rgba(30,42,90,.08)";
                         e.currentTarget.style.boxShadow = "";
+                        e.currentTarget.style.transform = "";
                       }}
                     >
                       <div
                         className="w-9 h-9 rounded-xl bg-[#FFF0EC] flex items-center justify-center mb-3 text-[#E34A2F] transition-transform duration-300 group-hover:scale-110"
                         style={{
-                          transition:
-                            "transform 0.3s cubic-bezier(.22,1,.36,1)",
+                          transition: "transform 0.3s cubic-bezier(.22,1,.36,1)",
                         }}
                       >
                         {card.icon}
@@ -732,7 +964,7 @@ export default function Home() {
                         {card.desc}
                       </p>
                     </div>
-                  </FadeInScale>
+                  </ZoomIn3D>
                 </TiltCard>
               ))}
             </div>
@@ -742,47 +974,43 @@ export default function Home() {
 
       {/* ── STATS ── */}
       <section className="w-full bg-[#FDFAF6] py-12 px-5 sm:px-8">
-  <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {STATS.map((item, i) => (
+              <FlipInUp key={i} delay={i * 130}>
+                <div
+                  className="relative bg-white rounded-[20px] border border-gray-200 p-6 h-[220px] flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 float-3d"
+                  style={{ animationDelay: `${i * 0.4}s` }}
+                >
+                  {/* Decorative corner gradient */}
+                  <div
+                    className="absolute top-0 right-0 w-24 h-24 pointer-events-none"
+                    style={{
+                      background:
+                        "radial-gradient(circle at top right, rgba(227,74,47,0.06), transparent 70%)",
+                    }}
+                  />
 
-    {/* Stats Cards */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      {STATS.map((item, i) => (
-        <FadeInScale key={i} delay={i * 120}>
-          
-          <div className="relative bg-white rounded-[20px] border border-gray-200 p-6 h-[220px] flex flex-col justify-between overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-            
-            {/* Decorative corner gradient */}
-            <div
-              className="absolute top-0 right-0 w-24 h-24 pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(circle at top right, rgba(227,74,47,0.06), transparent 70%)",
-              }}
-            />
+                  {/* Content */}
+                  <div className="relative z-0">
+                    <p className="text-[14px] text-gray-600 mb-3">
+                      {item.label}
+                    </p>
 
-            {/* Content */}
-            <div className="relative z-0">
-              <p className="text-[14px] text-gray-600 mb-3">
-                {item.label}
-              </p>
+                    <p className="text-[40px] sm:text-[44px] font-semibold text-gray-900 leading-none mb-3">
+                      <AnimatedCounter target={item.value} />
+                    </p>
 
-              <p className="text-[40px] sm:text-[44px] font-semibold text-gray-900 leading-none mb-3">
-                <AnimatedCounter target={item.value} />
-              </p>
-
-              <p className="text-[13px] text-gray-500 leading-relaxed">
-                {item.desc}
-              </p>
-            </div>
-
+                    <p className="text-[13px] text-gray-500 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              </FlipInUp>
+            ))}
           </div>
-
-        </FadeInScale>
-      ))}
-    </div>
-
-  </div>
-</section>
+        </div>
+      </section>
 
       {/* ── FEATURED PROJECTS ── */}
       <section className="bg-[#FDFAF6] py-20 sm:py-28 px-5 sm:px-8 overflow-hidden">
@@ -996,7 +1224,7 @@ export default function Home() {
               "radial-gradient(circle at 10% 20%, rgba(227,74,47,0.18), transparent 40%)",
           }}
         />
-        {/* Decorative circle */}
+        {/* Decorative circles */}
         <div
           className="absolute right-10 top-10 w-64 h-64 rounded-full pointer-events-none"
           style={{
@@ -1034,7 +1262,7 @@ export default function Home() {
           {/* Process Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {PROCESS.map((item, i) => (
-              <FadeInScale key={i} delay={i * 120}>
+              <StaggerSide key={i} index={i} delay={i * 130}>
                 <TiltCard>
                   <div className="process-card relative bg-white rounded-2xl p-6 shadow-sm">
                     {/* Step Number with ring */}
@@ -1063,7 +1291,7 @@ export default function Home() {
                     {/* Arrow connector */}
                     {i < 2 && (
                       <div
-                        className="hidden lg:block absolute top-1/2 right-[-22px] -translate-y-1/2 text-[#E34A2F] text-xl z-10"
+                        className="process-arrow hidden lg:block absolute top-1/2 right-[-22px] -translate-y-1/2 text-[#E34A2F] text-xl z-10"
                         style={{
                           filter: "drop-shadow(0 0 4px rgba(227,74,47,0.3))",
                         }}
@@ -1073,7 +1301,7 @@ export default function Home() {
                     )}
                   </div>
                 </TiltCard>
-              </FadeInScale>
+              </StaggerSide>
             ))}
           </div>
         </div>
@@ -1101,7 +1329,7 @@ export default function Home() {
           {/* Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
             {BLOGS.map((blog, i) => (
-              <FadeUp key={i} delay={i * 100}>
+              <ZoomIn3D key={i} delay={i * 110}>
                 <div className="blog-card group cursor-pointer">
                   {/* Image */}
                   <div className="rounded-2xl overflow-hidden mb-4 h-[220px] sm:h-[250px]">
@@ -1135,7 +1363,7 @@ export default function Home() {
                     />
                   </div>
                 </div>
-              </FadeUp>
+              </ZoomIn3D>
             ))}
           </div>
         </div>

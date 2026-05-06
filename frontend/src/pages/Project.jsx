@@ -26,20 +26,6 @@ const projects = [
       ["Smart Homes", "Fully automated lighting and security systems"],
       ["Premium Interiors", "Italian marble and designer finishes"],
     ],
-    amenities: [
-      { icon: "🏊", label: "Infinity Pool" },
-      { icon: "🏋️", label: "Fitness Center" },
-      { icon: "🌳", label: "Tropical Gardens" },
-      { icon: "🔒", label: "Smart Security" },
-      { icon: "🚗", label: "EV Parking" },
-      { icon: "🛥️", label: "Private Jetty" },
-    ],
-    gallery: [
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80",
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80",
-    ],
     image:
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
   },
@@ -63,20 +49,6 @@ const projects = [
       ["Security", "24/7 gated security with CCTV monitoring"],
       ["Green Spaces", "Landscaped gardens and jogging tracks"],
     ],
-    amenities: [
-      { icon: "🏊", label: "Rooftop Pool" },
-      { icon: "🏋️", label: "Gym & Spa" },
-      { icon: "🌳", label: "Sky Garden" },
-      { icon: "🔒", label: "CCTV Security" },
-      { icon: "🚗", label: "Covered Parking" },
-      { icon: "👶", label: "Kids Zone" },
-    ],
-    gallery: [
-      "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80",
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80",
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80",
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80",
-    ],
     image:
       "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80",
   },
@@ -99,20 +71,6 @@ const projects = [
       ["Modern Layout", "Spacious floor plans with natural ventilation"],
       ["Amenities", "Swimming pool, gym, and kids play area"],
       ["Parking", "Dedicated covered parking for each unit"],
-    ],
-    amenities: [
-      { icon: "🏊", label: "Swimming Pool" },
-      { icon: "🏋️", label: "Modern Gym" },
-      { icon: "🌳", label: "Green Avenues" },
-      { icon: "🔒", label: "Gated Access" },
-      { icon: "🚗", label: "Covered Parking" },
-      { icon: "👶", label: "Play Area" },
-    ],
-    gallery: [
-      "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=1200&q=80",
-      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=1200&q=80",
-      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&q=80",
-      "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=1200&q=80",
     ],
     image:
       "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=1200&q=80",
@@ -568,131 +526,103 @@ function MapPin({ listing }) {
 // ── Explore Nearby Homes Section ──────────────────────────────────
 function ExploreMapSection() {
   const [ref, inView] = useInView(0.1);
+
   return (
     <section
       ref={ref}
-      className="relative w-full overflow-hidden"
-      style={{ height: "520px", background: "#111111" }}
+      className="relative w-full overflow-hidden bg-[#111111]"
     >
-      <svg
-        className="absolute inset-0 w-full h-full"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="xMidYMid slice"
-        viewBox="0 0 1200 520"
-      >
-        <rect width="1200" height="520" fill="#111111" />
-        <g stroke="#1e1e1e" strokeWidth="8" fill="none">
-          <path d="M0 200 Q300 185 600 210 T1200 195" />
-          <path d="M0 360 Q400 340 700 370 T1200 355" />
-          <path d="M150 0 Q165 260 145 520" />
-          <path d="M430 0 Q415 260 440 520" />
-          <path d="M720 0 Q735 260 710 520" />
-          <path d="M980 0 Q965 260 995 520" />
-        </g>
-        <g stroke="#181818" strokeWidth="3" fill="none">
-          <path d="M0 100 Q300 90 650 108 T1200 95" />
-          <path d="M0 290 Q350 275 700 295 T1200 280" />
-          <path d="M0 440 Q300 430 650 445 T1200 435" />
-          <path d="M285 0 Q270 260 290 520" />
-          <path d="M575 0 Q590 260 565 520" />
-          <path d="M855 0 Q840 260 870 520" />
-          <path d="M1100 0 Q1085 260 1110 520" />
-        </g>
-        <g fill="#191919">
-          {[
-            [10, 10, 115, 75],
-            [175, 15, 85, 60],
-            [300, 8, 100, 80],
-            [455, 12, 125, 70],
-            [625, 10, 75, 85],
-            [745, 15, 105, 65],
-            [890, 8, 75, 78],
-            [1010, 12, 90, 70],
-            [1120, 10, 70, 75],
-            [10, 115, 105, 55],
-            [175, 110, 80, 60],
-            [300, 118, 95, 50],
-            [455, 112, 115, 58],
-            [625, 115, 80, 55],
-            [745, 108, 100, 60],
-            [890, 112, 80, 55],
-            [1010, 115, 85, 52],
-            [1120, 110, 70, 58],
-            [10, 220, 110, 60],
-            [175, 215, 90, 65],
-            [300, 222, 100, 55],
-            [455, 218, 120, 62],
-            [625, 220, 75, 58],
-            [745, 215, 105, 62],
-            [890, 222, 80, 55],
-            [1010, 220, 90, 58],
-            [1120, 215, 70, 62],
-            [10, 305, 105, 30],
-            [175, 300, 80, 35],
-            [300, 308, 100, 28],
-            [455, 303, 115, 32],
-            [625, 305, 80, 30],
-            [745, 300, 100, 35],
-            [890, 305, 80, 30],
-            [1010, 302, 85, 33],
-            [1120, 300, 70, 35],
-            [10, 375, 110, 65],
-            [175, 370, 90, 70],
-            [300, 378, 100, 60],
-            [455, 372, 120, 68],
-            [625, 375, 75, 65],
-            [745, 370, 105, 68],
-            [890, 378, 80, 62],
-            [1010, 374, 90, 66],
-            [1120, 370, 70, 68],
-            [10, 460, 105, 55],
-            [175, 455, 80, 60],
-            [300, 462, 100, 52],
-            [455, 458, 115, 56],
-            [625, 460, 80, 54],
-            [745, 455, 100, 60],
-            [890, 460, 80, 54],
-            [1010, 458, 85, 56],
-            [1120, 455, 70, 60],
-          ].map(([x, y, w, h], i) => (
-            <rect key={i} x={x} y={y} width={w} height={h} rx="3" />
+      {/* Responsive height */}
+      <div className="relative h-[420px] sm:h-[520px] md:h-[620px] lg:h-[700px]">
+        
+        {/* Background SVG */}
+        <svg
+          className="absolute inset-0 w-full h-full"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid slice"
+          viewBox="0 0 1200 520"
+        >
+          <rect width="1200" height="520" fill="#111111" />
+
+          <g stroke="#1e1e1e" strokeWidth="8" fill="none">
+            <path d="M0 200 Q300 185 600 210 T1200 195" />
+            <path d="M0 360 Q400 340 700 370 T1200 355" />
+            <path d="M150 0 Q165 260 145 520" />
+            <path d="M430 0 Q415 260 440 520" />
+            <path d="M720 0 Q735 260 710 520" />
+            <path d="M980 0 Q965 260 995 520" />
+          </g>
+
+          <g stroke="#181818" strokeWidth="3" fill="none">
+            <path d="M0 100 Q300 90 650 108 T1200 95" />
+            <path d="M0 290 Q350 275 700 295 T1200 280" />
+            <path d="M0 440 Q300 430 650 445 T1200 435" />
+            <path d="M285 0 Q270 260 290 520" />
+            <path d="M575 0 Q590 260 565 520" />
+            <path d="M855 0 Q840 260 870 520" />
+            <path d="M1100 0 Q1085 260 1110 520" />
+          </g>
+
+          <g fill="#191919">
+            {[
+              [10,10,115,75],[175,15,85,60],[300,8,100,80],[455,12,125,70],[625,10,75,85],[745,15,105,65],[890,8,75,78],[1010,12,90,70],[1120,10,70,75],
+              [10,115,105,55],[175,110,80,60],[300,118,95,50],[455,112,115,58],[625,115,80,55],[745,108,100,60],[890,112,80,55],[1010,115,85,52],[1120,110,70,58],
+              [10,220,110,60],[175,215,90,65],[300,222,100,55],[455,218,120,62],[625,220,75,58],[745,215,105,62],[890,222,80,55],[1010,220,90,58],[1120,215,70,62],
+              [10,305,105,30],[175,300,80,35],[300,308,100,28],[455,303,115,32],[625,305,80,30],[745,300,100,35],[890,305,80,30],[1010,302,85,33],[1120,300,70,35],
+              [10,375,110,65],[175,370,90,70],[300,378,100,60],[455,372,120,68],[625,375,75,65],[745,370,105,68],[890,378,80,62],[1010,374,90,66],[1120,370,70,68],
+              [10,460,105,55],[175,455,80,60],[300,462,100,52],[455,458,115,56],[625,460,80,54],[745,455,100,60],[890,460,80,54],[1010,458,85,56],[1120,455,70,60],
+            ].map(([x, y, w, h], i) => (
+              <rect key={i} x={x} y={y} width={w} height={h} rx="3" />
+            ))}
+          </g>
+        </svg>
+
+        {/* Dark Overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 52% 58% at 50% 50%, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.12) 100%)",
+          }}
+        />
+
+        {/* Hide pins on very small screens */}
+        <div className="hidden sm:block">
+          {nearbyListings.map((listing, i) => (
+            <MapPin key={listing.id} listing={listing} index={i} />
           ))}
-        </g>
-      </svg>
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 52% 58% at 50% 50%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.42) 55%, rgba(0,0,0,0.12) 100%)",
-        }}
-      />
-      {nearbyListings.map((listing) => (
-        <MapPin key={listing.id} listing={listing} />
-      ))}
-      <div
-        className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none"
-        style={{
-          opacity: inView ? 1 : 0,
-          transform: inView ? "translateY(0)" : "translateY(24px)",
-          transition: "opacity 0.9s ease 0.2s, transform 0.9s ease 0.2s",
-        }}
-      >
-        <h2
-          className="text-white font-black leading-tight mb-3"
-          style={{ fontSize: "clamp(28px, 4.5vw, 52px)" }}
+        </div>
+
+        {/* Content */}
+        <div
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-5 sm:px-8 md:px-12"
+          style={{
+            opacity: inView ? 1 : 0,
+            transform: inView
+              ? "translateY(0) scale(1)"
+              : "translateY(32px) scale(0.96)",
+            transition:
+              "opacity 1s cubic-bezier(0.16,1,0.3,1) 0.2s, transform 1s cubic-bezier(0.16,1,0.3,1) 0.2s",
+          }}
         >
-          Explore Nearby Homes
-        </h2>
-        <p className="text-white/55 text-sm sm:text-base max-w-xs leading-relaxed mb-8">
-          Browse available homes near you and explore listings in your favorite
-          areas.
-        </p>
-        <button
-          className="pointer-events-auto px-8 py-3.5 bg-white text-gray-900 font-bold text-sm rounded-full transition-all duration-200 hover:bg-gray-100 hover:-translate-y-0.5"
-          style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.35)" }}
-        >
-          Get Started
-        </button>
+          <h2 className="text-white font-black leading-[1.1] text-[28px] sm:text-[42px] md:text-[56px] lg:text-[68px] max-w-[280px] sm:max-w-2xl md:max-w-4xl">
+            Explore Nearby Homes
+          </h2>
+
+          <p className="text-white/60 text-[13px] sm:text-base md:text-lg leading-relaxed mt-4 mb-7 max-w-[260px] sm:max-w-lg">
+            Browse available homes near you and explore listings in your
+            favorite areas.
+          </p>
+
+          <button
+            className="pointer-events-auto px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-white text-gray-900 font-bold text-sm sm:text-base rounded-full transition-all duration-300 hover:bg-gray-100 hover:-translate-y-1 active:scale-95"
+            style={{
+              boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+            }}
+          >
+            Get Started
+          </button>
+        </div>
       </div>
     </section>
   );
