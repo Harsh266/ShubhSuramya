@@ -740,7 +740,7 @@ useEffect(() => {
 
   return (
     <>
-      <Navbar />
+      
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800;900&display=swap');
@@ -1047,6 +1047,7 @@ video {
 
       {/* ── HERO ── */}
 <section className="relative w-full h-screen overflow-x-hidden overflow-y-hidden bg-black flex flex-col items-center justify-center">
+  <Navbar />
         <div
           className={`absolute inset-0 bg-cover bg-top transition-transform duration-[14000ms] ease-out ${loaded ? "scale-100" : "scale-110"}`}
           style={{

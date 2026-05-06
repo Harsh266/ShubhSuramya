@@ -1216,7 +1216,7 @@ export default function About() {
 
   return (
     <>
-      <Navbar />
+      
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800;900&display=swap');
@@ -1528,6 +1528,7 @@ div {
         className="relative w-full overflow-hidden bg-black flex flex-col items-center justify-center"
         style={{ minHeight: "100svh" }}
       >
+        <Navbar />
         <div
           ref={heroParallaxRef}
           className="absolute inset-0 overflow-hidden"
